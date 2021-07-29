@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import { Actions } from "./Actions";
 
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -28,8 +28,10 @@ export const Editor = () => {
 
   return (
     <>
+      {/* Actions with BOLD | ITALIC | UNDERLINE | STRIKETHROUGH | LINK | IMAGE | GIF functionality */}
       <Actions editor={editor} />
       <div class="neu-editor flex flex-col outline w-10/12 p-10 h-full overflow-y-auto ">
+        {/* Tip Tap Editor */}
         <EditorContent Placeholder="Start writing..." editor={editor} />
       </div>
     </>

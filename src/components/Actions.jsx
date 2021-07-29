@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal } from "./Modal";
 import axios from "axios";
+
+// Destructuring svgs
 import {
-  Bold,
   Italic,
   Underline,
   Link,
@@ -24,8 +25,8 @@ export const Actions = ({ editor }) => {
 
   const [type, setType] = useState("");
   const [isModalActive, setIsModalActive] = useState(false);
-  //
 
+  // Checking if editor text contains template {{any_meme}}
   async function getSearchKeyword() {
     try {
       let content = editor.getHTML();
@@ -43,14 +44,19 @@ export const Actions = ({ editor }) => {
       console.log(e.message);
     }
   }
+  // get GIF url from gify and return img tag
   async function addGif(query) {
     const url = await getGif(query);
-    if (url) {
-      return `<img src=${`"${url}"`} />`;
-    } else {
-      return "";
-    }
+    return new Promise((resolve, reject) => {
+      if (url) {
+        return resolve(`<img src=${`"${url}"`} />`);
+      } else {
+        return reject({ message: "Could not find GIF with matching keyword" });
+      }
+    });
   }
+
+  // Fetch GIF from api
   async function getGif(query) {
     try {
       const {
@@ -58,9 +64,11 @@ export const Actions = ({ editor }) => {
       } = await axios.get(
         `https://api.giphy.com/v1/gifs/search?api_key=${process.env.REACT_APP_apiKey}&q=${query}`
       );
-      return data[0].images.original.webp;
+      return new Promise((resolve) => resolve(data[0].images.original.webp));
     } catch (e) {
-      return null;
+      return new Promise((resolve, reject) =>
+        reject({ message: "ERROR in fetching GIF" })
+      );
     }
   }
 
@@ -177,6 +185,7 @@ export const Actions = ({ editor }) => {
           <Gif />
         </button>
       </div>
+      {/* Modal to handle IMAGE and LINK urls */}
       {isModalActive && (
         <Modal
           type={type}
